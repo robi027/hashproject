@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="/assets/todo-list.js"></script>
     <link rel="stylesheet" href="/assets/style.css">
+    <script src="https://www.gstatic.com/firebasejs/5.0.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.0.3/firebase-firestore.js"></script>
     <title>Todo List</title>
 </head>
+
 <body>
     <h1>My Todo List App</h1>
     <div id="todo-table">
@@ -15,10 +19,13 @@
         </form>
         <ul>
             <% for(var i=0; i < todos.length; i++){ %>
-                <li><%= todos[i].item %></li>
-           <% } %>
+                <li>
+                    <%= todos[i].item %>
+                </li>
+            <% } %>
         </ul>
     </div>
-    
+    <script src="/assets/firebase.js"></script>
 </body>
+
 </html>

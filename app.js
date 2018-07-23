@@ -1,18 +1,18 @@
-var express = require('express');
-
-var todoController = require('./controllers/todoController');
-
-var app = express();
+const express = require("express");
+// const todoController = require('./controllers/todoController');
+const user = require("./controllers/user");
+const app = express();
 
 //set up template engine
-app.set('view engine', 'ejs');
+//app.set("view engine", "ejs");
 
 //static file
-app.use(express.static('public'));
+//app.use(express.static("public"));
 
 //fire controllers
-todoController(app);
+// todoController(app);
+user(app);
 
 //listen to port
 app.listen(3000);
-console.log('You are listening to port 3000');
+console.log("You are listening to port 3000");
