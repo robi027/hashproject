@@ -44,15 +44,17 @@ module.exports = function(app) {
   });
 
   app.post("/user", urlencodedParser, function(req, res){
-      userCollection.set({
-          username : "robs027",
-          password : "robs027"
+      var addDoc = userCollection.add({
+          username : "coba function",
+          password : "coba function"
       })
-      .then( () => {
-          console.log("Data Sukses Di Inputkan");
+      .then(ref => {
+        addDoc.push(req.body);
+        res.json(addDoc);
+        console.log("Data Sukses Di Inputkan", ref.id);
       })
-      .catch(err => {
-          console.log("Data Gagal Di Inputkan");
+      .catch(err =>{
+        console.log("Data Gagal Di Inputkan", err);
       })
   })
 };
