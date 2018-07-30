@@ -44,7 +44,7 @@ module.exports = function(app) {
       });
   });
 
-  app.delete("/user/tambah-data/:item", urlencodedParser, function(req, res) {
+  app.post("/user", urlencodedParser, function(req, res) {
     // data = req.body.username;
     data = userCollection
       .add({
@@ -67,12 +67,4 @@ module.exports = function(app) {
         });
       });
   });
-
-  app.post('/user/delete-data', urlencodedParser, function(req, res){
-    data = data.filter(function(todo){
-      return todo.item.replace(/ /g, '-') !== req.params.item;
-    }) 
-    res.json(data);
-  })
-  
 };
