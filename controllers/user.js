@@ -67,4 +67,25 @@ module.exports = function(app) {
         });
       });
   });
+
+  app.delete('/user', function(req, res){
+    let id = req.body.id;
+    userCollection.doc(id).delete()
+    .then(() => {
+      res.json({
+        statusCode: "200",
+        statusResponse: "Ok",
+        message: "Data Berhasil Di Hapus",
+        dataid: id
+      })
+    })
+    .catch(err => {
+      res.json({
+        statusCode: "500",
+        statusResponse: "Error",
+        message: err
+      });
+    });
+    app.put('/user', )
+  });
 };
