@@ -86,6 +86,5 @@ module.exports = function(app) {
         message: err
       });
     });
-    app.put('/user', )
   });
 };
