@@ -3,6 +3,7 @@ const express = require("express");
 const user = require("./controllers/user");
 const app = express();
 
+
 //set up template engine
 //app.set("view engine", "ejs");
 

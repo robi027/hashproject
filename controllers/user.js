@@ -14,13 +14,14 @@ db.settings({ timestampsInSnapshots: true });
 const userCollection = db.collection("user");
 
 module.exports = function(app) {
+  app.use(bodyParser.json());
   app.get("/user", function(req, res, next) {
     let allUser = [];
     userCollection
       .get()
       .then(documentSet => {
         documentSet.forEach(doc => {
-        const myData = doc.data();
+          const myData = doc.data();
           allUser.push({
             Username: myData.username,
             Password: myData.password
@@ -43,18 +44,35 @@ module.exports = function(app) {
       });
   });
 
-  app.post("/user", urlencodedParser, function(req, res){
-      var addDoc = userCollection.add({
-          username : "coba function",
-          password : "coba function"
+  app.delete("/user/tambah-data/:item", urlencodedParser, function(req, res) {
+    // data = req.body.username;
+    data = userCollection
+      .add({
+        username: req.body.username,
+        password: req.body.password
       })
       .then(ref => {
-        addDoc.push(req.body);
-        res.json(addDoc);
-        console.log("Data Sukses Di Inputkan", ref.id);
+        res.json({
+          statusCode: "200",
+          statusResponse: "Ok",
+          message: "Data Berhasil Di Inputkan",
+          dataid: ref.id
+        });
       })
-      .catch(err =>{
-        console.log("Data Gagal Di Inputkan", err);
-      })
+      .catch(err => {
+        res.json({
+          statusCode: "500",
+          statusResponse: "Error",
+          message: err
+        });
+      });
+  });
+
+  app.post('/user/delete-data', urlencodedParser, function(req, res){
+    data = data.filter(function(todo){
+      return todo.item.replace(/ /g, '-') !== req.params.item;
+    }) 
+    res.json(data);
   })
+  
 };
