@@ -103,7 +103,7 @@ module.exports = function(app) {
       res.json({
         statusCode: "200",
           statusResponse: "Ok",
-          message: "Data Berhasil Di Ganti",
+          message: "Data Berhasil Di Gantis",
           dataid: id
       })
     })
