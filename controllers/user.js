@@ -99,7 +99,7 @@ module.exports = function(app) {
       username : username,
       password : password
     })
-    .then(function(req){
+    .then(function(){
       res.json({
         statusCode: "200",
           statusResponse: "Ok",
@@ -115,4 +115,19 @@ module.exports = function(app) {
       });
     });
   });
+
+  //Mengquery Data
+  app.get("/users/:ui", function(req, res){
+    let username = req.body.ui;
+    // console.log(req.params.username);
+    userCollection.where('username', '==' , username).get()
+    .then(snapshot => {
+      snapshot.forEach(doc => {
+        console.log(doc.id, '=>', doc.data());
+      })
+    })
+    .catch(err => {
+      console.log(err);
+    })
+  })
 };
