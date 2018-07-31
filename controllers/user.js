@@ -15,6 +15,7 @@ const userCollection = db.collection("user");
 
 module.exports = function(app) {
   app.use(bodyParser.json());
+  //Menampilkan Data
   app.get("/user", function(req, res, next) {
     let allUser = [];
     userCollection
@@ -43,7 +44,7 @@ module.exports = function(app) {
         console.log("Error", err);
       });
   });
-
+  //Menambahkan Data
   app.post("/user", urlencodedParser, function(req, res) {
     // data = req.body.username;
     data = userCollection
@@ -68,6 +69,7 @@ module.exports = function(app) {
       });
   });
 
+  //Menghapus Data
   app.delete('/user', function(req, res){
     let id = req.body.id;
     userCollection.doc(id).delete()
@@ -86,6 +88,31 @@ module.exports = function(app) {
         message: err
       });
     });
-    app.put('/user', )
+  });
+
+  //Mengedit Data
+  app.put('/user', function(req, res){
+    let id = req.body.id;
+    let username = req.body.username;
+    let password = req.body.password;
+    userCollection.doc(id).update({
+      username : username,
+      password : password
+    })
+    .then(function(req){
+      res.json({
+        statusCode: "200",
+          statusResponse: "Ok",
+          message: "Data Berhasil Di Ganti",
+          dataid: id
+      })
+    })
+    .catch(err => {
+      res.json({
+        statusCode: "500",
+        statusResponse: "Error",
+        message: err
+      });
+    });
   });
 };
