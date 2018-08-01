@@ -16,7 +16,7 @@ const userCollection = db.collection("user");
 module.exports = function(app) {
   app.use(bodyParser.json());
   //Menampilkan Data
-  app.get("/user", function(req, res, next) {
+  app.get("/users", function(req, res, next) {
     let allUser = [];
     userCollection
       .get()
@@ -117,10 +117,8 @@ module.exports = function(app) {
   });
 
   //Mengquery Data
-  app.get("/users/:ui", function(req, res){
-    let username = req.body.ui;
-    // console.log(req.params.username);
-    userCollection.where('username', '==' , username).get()
+  app.get('/user', function(req, res, next){
+    userCollection.where('username', '==' , req.query.username).get()
     .then(snapshot => {
       snapshot.forEach(doc => {
         console.log(doc.id, '=>', doc.data());
