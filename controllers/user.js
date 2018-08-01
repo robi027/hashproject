@@ -117,13 +117,14 @@ module.exports = function(app) {
   });
 
   //Mengquery Data
-  app.get("/users/:ui", function(req, res){
-    let username = req.body.ui;
+  app.get("/query/:user", function(req, res){
+    //let username = req.params.ui;
     // console.log(req.params.username);
-    userCollection.where('username', '==' , username).get()
+    userCollection.where('username', '==' , req.params.user).get()
     .then(snapshot => {
       snapshot.forEach(doc => {
         console.log(doc.id, '=>', doc.data());
+        res.send(doc.data());
       })
     })
     .catch(err => {
