@@ -45,7 +45,7 @@ module.exports = function(app) {
       });
   });
   //Menambahkan Data
-  app.post("/user", urlencodedParser, function(req, res) {
+  app.post("/user", function(req, res) {
     // data = req.body.username;
     data = userCollection
       .add({
@@ -117,8 +117,8 @@ module.exports = function(app) {
   });
 
   //Mengquery Data
-  app.get("/query/:user", function(req, res){
-    userCollection.where('username', '==' , req.params.user).get()
+  app.get("/user", function(req, res){
+    userCollection.where('username', '==' , req.query.username).get()
     .then(snapshot => {
       snapshot.forEach(doc => {
         console.log(doc.id, '=>', doc.data());
