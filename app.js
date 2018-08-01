@@ -1,6 +1,7 @@
 const express = require("express");
 // const todoController = require('./controllers/todoController');
 const user = require("./controllers/user");
+const azure = require("./controllers/azure");
 const app = express();
 
 
@@ -13,7 +14,10 @@ const app = express();
 //fire controllers
 // todoController(app);
 user(app);
+azure(app);
 
 //listen to port
 app.listen(3000);
 console.log("You are listening to port 3000");
+
+module.exports = app;
