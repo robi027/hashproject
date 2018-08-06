@@ -13,11 +13,12 @@ const app = express();
 
 //fire controllers
 // todoController(app);
-user(app);
-azure(app);
+//user(app);
+//azure(app);
+app.use('/api', require('./controllers/azure'));
 
 //listen to port
 app.listen(3000);
 console.log("You are listening to port 3000");
 
-module.exports = app;
+//module.exports = app;
