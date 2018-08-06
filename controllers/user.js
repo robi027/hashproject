@@ -1,5 +1,5 @@
 var bodyParser = require("body-parser");
-var urlencodedParser = bodyParser.urlencoded({ extended: false });
+// var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 const admin = require("firebase-admin");
 var serviceAccount = require("../hashprojectfs.json");
