@@ -1,5 +1,5 @@
 var bodyParser = require("body-parser");
-var urlencodedParser = bodyParser.urlencoded({ extended: false});
+// var urlencodedParser = bodyParser.urlencoded({ extended: false});
 
 // module.exports = function(app){
 //     app.get("/azure", function(req, res){
