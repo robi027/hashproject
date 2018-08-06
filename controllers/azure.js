@@ -1,16 +1,25 @@
+const express = require("express");
+const router = express.Router();
+
 var bodyParser = require("body-parser");
-// var urlencodedParser = bodyParser.urlencoded({ extended: false});
+var kudu = require("kudu-api")({
+    website: "https://dummy-hash.scm.azurewebsites.net/",
+    username: "$robi027",
+    password: "mnbvcxz12327"
+});
+var urlencodedParser = bodyParser.urlencoded({ extended: false});
 
 // module.exports = function(app){
 //     app.get("/azure", function(req, res){
 //         res.send("hello");
 //     });
 // }
-const express = require("express");
-const router = express.Router();
 
 router.get("/", function(req, res, next){
-    res.send("hello");
-})
+    kudu.scm.info(function (err, info){
+        if (err) throw err;
+        console.log(err);
+    });
+});
 
 module.exports = router;
