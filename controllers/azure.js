@@ -1,25 +1,28 @@
 const express = require("express");
+var axios = require("axios");
 const router = express.Router();
 
-var bodyParser = require("body-parser");
-var kudu = require("kudu-api")({
-    website: "https://dummy-hash.scm.azurewebsites.net/",
-    username: "$robi027",
-    password: "mnbvcxz12327"
-});
-var urlencodedParser = bodyParser.urlencoded({ extended: false});
 
-// module.exports = function(app){
-//     app.get("/azure", function(req, res){
-//         res.send("hello");
-//     });
-// }
+const url = "https://dummy-hash.scm.azurewebsites.net/basicauth";
+const development = "https://dummy-hash.scm.azurewebsites.net/api/deployments";
+const username = "$robi027";
+const password = "mnbvcxz12327";
 
-router.get("/", function(req, res, next){
-    kudu.scm.info(function (err, info){
-        if (err) throw err;
-        console.log(err);
-    });
-});
+router.get("/", (req,res) =>{
+
+  axios.get(development, {
+      headers: {
+          "Authorization" : "Basic cm9iaTAyNzptbmJ2Y3h6MTIzMjc="}
+
+        })
+        
+      .then((response)=>{
+         console.log("Success", response);
+        JSON.parse(JSON.stringify(response.data));
+      })
+      .catch((err) => {
+          console.log("Error", err);
+      })
+})
 
 module.exports = router;
