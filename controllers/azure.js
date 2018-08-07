@@ -3,10 +3,10 @@ var axios = require("axios");
 const router = express.Router();
 
 
-const url = "https://dummy-hash.scm.azurewebsites.net/basicauth";
+// const url = "https://dummy-hash.scm.azurewebsites.net/basicauth";
 const development = "https://dummy-hash.scm.azurewebsites.net/api/deployments";
-const username = "$robi027";
-const password = "mnbvcxz12327";
+// const username = "$robi027";
+// const password = "mnbvcxz12327";
 
 router.get("/", (req,res) =>{
 
