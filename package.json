@@ -13,10 +13,14 @@
   "author": "NRK",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.18.0",
     "body-parser": "^1.18.3",
-    "ejs": "^2.6.1",
     "express": "^4.16.3",
+<<<<<<< HEAD
     "firebase-admin": "^5.13.0",
     "mongoose": "^5.2.2"
+=======
+    "firebase-admin": "^5.13.0"
+>>>>>>> 4ec1cb02d92866475ac9645df5e823050e2e3e50
   }
 }

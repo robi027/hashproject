@@ -1,5 +1,4 @@
 var bodyParser = require("body-parser");
-// var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 const admin = require("firebase-admin");
 var serviceAccount = require("../hashprojectfs.json");
@@ -46,7 +45,6 @@ module.exports = function(app) {
   });
   //Menambahkan Data
   app.post("/user", function(req, res) {
-    // data = req.body.username;
     data = userCollection
       .add({
         username: req.body.username,
