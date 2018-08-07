@@ -2,22 +2,16 @@ const express = require("express");
 var axios = require("axios");
 const router = express.Router();
 
-<<<<<<< HEAD
-var bodyParser = require("body-parser");
-var urlencodedParser = bodyParser.urlencoded({ extended: false});
-=======
->>>>>>> 4ec1cb02d92866475ac9645df5e823050e2e3e50
 
 // const url = "https://dummy-hash.scm.azurewebsites.net/basicauth";
-const development = "https://dummy-hash.scm.azurewebsites.net/api/deployments";
+const deployments = "https://dummy-hash.scm.azurewebsites.net/api/deployments";
+const logstream = "https://dummy-hash.scm.azurewebsites.net/api/logstream";
 // const username = "$robi027";
 // const password = "mnbvcxz12327";
-
-<<<<<<< HEAD
-=======
+/*
 router.get("/", (req,res) =>{
 
-  axios.get(development, {
+  axios.get(deployments, {
       headers: {
           "Authorization" : "Basic cm9iaTAyNzptbmJ2Y3h6MTIzMjc="}
 
@@ -25,12 +19,26 @@ router.get("/", (req,res) =>{
         
       .then((response)=>{
          console.log("Success", response);
-        JSON.parse(JSON.stringify(response.data));
+         //JSON.parse(JSON.stringify(response.data))
+        res.send(response.data);
       })
       .catch((err) => {
           console.log("Error", err);
       })
 })
+*/
+router.get("/", async (req, res, next) => {
+  try {
+    const response = await axios.get(deployments, {
+      headers: {
+          "Authorization" : "Basic cm9iaTAyNzptbmJ2Y3h6MTIzMjc="}
 
->>>>>>> 4ec1cb02d92866475ac9645df5e823050e2e3e50
+        })
+    res.send(response.data);
+    console.log(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
 module.exports = router;
