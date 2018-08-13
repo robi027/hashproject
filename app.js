@@ -6,7 +6,7 @@ const axios = require("./controllers/axiosTest");
 const app = express();
 
 //static file
-// app.use(express.static("public"));
+app.use(express.static(__dirname + '/views'));
 app.use("/azure", azure);
 app.use("/axios", axios);
 //fire controllers
