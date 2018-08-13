@@ -1,5 +1,4 @@
 const express = require("express");
-const server = require("./server");
 const user = require("./controllers/user");
 const azure = require("./controllers/azure");
 const axios = require("./controllers/axiosTest");
@@ -13,8 +12,8 @@ app.use("/axios", axios);
 // todoController(app);
 user(app);
 // azure(app);
-server(app);
 
+module.exports = app;
 //listen to port
 // app.listen(3000);
 // console.log("You are listening to port 3000");

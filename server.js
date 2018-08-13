@@ -1,14 +1,16 @@
-const port = 3000
+const express = require('express');
+const apps = require('./app');
+const app = express();
 
-module.exports = function(app){
-    
-    app.listen(port, (err) => {
+const port = 3000;
 
-        if (err) {
-          return console.log('something bad happened', err)
-        }
-      
-        console.log(`server is listening on ${port}`)
-      })
+app.use('', apps);
 
-}
+app.listen(port, (err) => {
+
+  if (err) {
+    return console.log('something bad happened', err)
+  }
+
+  console.log(`server is listening on ${port}`)
+})
