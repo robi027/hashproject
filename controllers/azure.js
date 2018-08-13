@@ -7,17 +7,30 @@ const deployments = "https://dummy-hash.scm.azurewebsites.net/api/deployments";
 const logstream = "https://dummy-hash.scm.azurewebsites.net/api/logstream";
 // const username = "$robi027";
 // const password = "mnbvcxz12327";
+var header = {
+  headers: {
+    "Authorization" : "Basic cm9iaTAyNzptbmJ2Y3h6MTIzMjc="
+  }
+}
 
-router.get("/", async (req, res, next) => {
+router.get("/deployments/", async (req, res, next) => {
   try {
-    const response = await axios.get(deployments, {
-      headers: {
-          "Authorization" : "Basic cm9iaTAyNzptbmJ2Y3h6MTIzMjc="}
-        })
+    let response = await axios.get(deployments, header)
+    res.send(response.data);
+    console.log("hello");
+  } catch (error) {
+    console.error(error);
+  }
+  next();
+});
+
+router.get("/logstream/", async (req, res, next) =>{
+  try {
+    let response = await axios.get(logstream, header)
     res.send(response.data);
   } catch (error) {
     console.error(error);
   }
-});
+})
 
 module.exports = router;
