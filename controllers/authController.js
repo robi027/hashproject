@@ -21,10 +21,9 @@ router.post('/login', async function(req, res) {
     var snapshot = await userCollection.where('username', '==' , req.body.username).get();
     snapshot.forEach(doc => {
       if (doc) {
-        console.log(doc.id, '=>', doc.data());
-        res.send(doc.data());
+        return res.status(200).send(req.body.username + ' found.');
       } else if (!doc) {
-        res.status(404).send(req.body.username + 'Not found.');
+        return res.status(404).send(req.body.username + ' not found.');
       }
       })
   } catch (error) {
