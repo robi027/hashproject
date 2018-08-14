@@ -18,18 +18,35 @@ var config = require('../config'); // get config file
 
 router.post('/login', async function(req, res) {
   try {
+    var id;
     var user;
-    var snapshot = await userCollection.where('username', '==' , req.body.username).get();
+    var pass;
+    var passwordIsValid;
+    var snapshot = await userCollection.where('email', '==' , req.body.email).where('password', '==' , req.body.password).get();
     snapshot.forEach(doc => {
-      user = doc.data().username;      
+      user = doc.data().email;
+      pass = doc.data().password;
+      console.log(user);
+      console.log(pass);
+      id = doc.id;
+      console.log(id);
+      
+      // check if the password is valid
+      passwordIsValid = bcrypt.compareSync(req.body.password, doc.data().password);      
     });
-    if (user == req.body.username) {
-      console.log(req.body.username + ' found.');
-      res.status(200).send(req.body.username + ' found.');
-    } else {
+    if (user && pass) {
+      console.log(req.body.email + ' found.');
+      console.log(req.body.password + ' found.');
+      res.status(200).send(req.body.email + ' found.');
+      res.status(200).send(req.body.password + ' found.');
+    } else if (!user) {
       console.log('No user found.');
       res.status(404).send('No user found.');
-    };
+    } else if (!passwordIsValid) { 
+      res.status(401).send({ auth: false, token: null });
+    }
+  
+
   } catch (error) {
     console.log(error);
     res.status(500).send('Error on the server.' + error);
@@ -45,7 +62,7 @@ router.post('/register', async function(req, res) {
         var hashedPassword = bcrypt.hashSync(req.body.password, 8);
 
         var response = await userCollection.add({
-              username: req.body.username,
+              email: req.body.email,
               password: hashedPassword
             })
               res.json({
