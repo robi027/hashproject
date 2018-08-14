@@ -1,18 +1,11 @@
 var bodyParser = require("body-parser");
+var userCollection = require("../firestore");
+const express = require("express");
+const app = express();
 
-const admin = require("firebase-admin");
-var serviceAccount = require("../hashprojectfs.json");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
 
-var db = admin.firestore();
-db.settings({ timestampsInSnapshots: true });
 
-const userCollection = db.collection("user");
-
-module.exports = function(app) {
   app.use(bodyParser.json());
   //Menampilkan Data
   app.get("/users", function(req, res, next) {
@@ -127,4 +120,5 @@ module.exports = function(app) {
       console.log(err);
     })
   })
-};
+
+  module.exports = app;

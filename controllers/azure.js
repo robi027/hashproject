@@ -3,10 +3,6 @@ var axios = require("axios");
 const router = express.Router();
 
 
-<<<<<<< HEAD
-// const url = "https://dummy-hash.scm.azurewebsites.net/basicauth";
-=======
->>>>>>> refs/remotes/origin/staging
 const deployments = "https://dummy-hash.scm.azurewebsites.net/api/deployments";
 const logstream = "https://dummy-hash.scm.azurewebsites.net/api/logstream";
 // const username = "$robi027";
@@ -27,8 +23,6 @@ router.get("/deployments/", async (req, res, next) => {
   }
   next();
 });
-<<<<<<< HEAD
-=======
 
 router.get("/logstream/", async (req, res, next) =>{
   try {
@@ -38,6 +32,5 @@ router.get("/logstream/", async (req, res, next) =>{
     console.error(error);
   }
 })
->>>>>>> refs/remotes/origin/staging
 
 module.exports = router;
