@@ -18,15 +18,16 @@ var config = require('../config'); // get config file
 
 router.post('/login', async function(req, res) {
   try {
+    var hello;
     var snapshot = await userCollection.where('username', '==' , req.body.username).get();
     snapshot.forEach(doc => {
-      if (doc) {
-        console.log(doc.id, '=>', doc.data());
-        res.send(doc.data());
-      } else if (!doc) {
-        res.status(404).send(req.body.username + 'Not found.');
-      }
-      })
+      hello = doc.data().username;      
+    });
+    if (hello == req.body.username) {
+      console.log("ada");
+    } else {
+      console.log("tidak ada");
+    };
   } catch (error) {
     console.error(error);
   }
