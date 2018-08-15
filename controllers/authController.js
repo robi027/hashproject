@@ -16,6 +16,27 @@ var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var bcrypt = require('bcryptjs');
 var config = require('../config'); // get config file
 
+router.post('/check', async function(req, res) {
+  try {
+    var id, user, pass, passwordIsValid;
+    var snapshot = await userCollection.where('email', '==' , req.body.email).get();
+    snapshot.forEach(doc => {
+      user = doc.data().email;
+      pass = doc.data().password;
+      console.log('email: ' + user);
+      console.log('hashedpassword: ' + pass);
+      id = doc.id;
+      console.log('id: ' + id);
+      
+      // check if the password is valid
+      passwordIsValid = bcrypt.compareSync(req.body.password, doc.data().password);      
+    });
+    
+  } catch (error) {
+    
+  }
+})
+
 router.post('/login', async function(req, res) {
   try {
     var id, user, pass, passwordIsValid;
