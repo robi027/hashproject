@@ -22,7 +22,7 @@ router.get("/deployments/", async (req, res, next) => {
     console.error(error);
   }
   next();
-});
+})
 
 router.get("/logstream/", async (req, res, next) =>{
   try {

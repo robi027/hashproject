@@ -3,9 +3,6 @@ var userCollection = require("../firestore");
 const express = require("express");
 const app = express();
 
-
-
-
   app.use(bodyParser.json());
   //Menampilkan Data
   app.get("/users", function(req, res, next) {
