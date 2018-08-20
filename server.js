@@ -6,6 +6,15 @@ const port = 3000;
 
 app.use('', apps);
 
+// app.get('/coba', (req, res)=> {
+// 	console.log("Hello");
+// 	res.send("OK");
+// });
+
+// setInterval(()=> {
+// 	console.log("hello " + Date.now());
+// }, 3000);
+
 app.listen(port, (err) => {
 
   if (err) {
