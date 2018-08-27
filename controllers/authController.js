@@ -18,15 +18,15 @@ var config = require('../config'); // get config file
 
 router.post('/login', async function (req, res) {
   try {
-    var user, idUser;
-    var pass;
+    var user, idUser, pass;
     var snapshot = await userCollection.where('email', '==', req.body.email).get();
     snapshot.forEach(doc => {
       idUser = doc.id;
       user = doc.data().email;
       pass = doc.data().password;
+
+      passwordIsValid = bcrypt.compareSync(req.body.password, pass);
     });
-    passwordIsValid = bcrypt.compareSync(req.body.password, pass);
 
     if (user && passwordIsValid) {
       // if user is found and password is valid
@@ -40,15 +40,54 @@ router.post('/login', async function (req, res) {
 
     } else if (!user) {
       res.status(404).send('No user found.');
-    } else {
-      res.status(401).send({ auth: false, token: null });
     }
   } catch (error) {
     res.status(500).send('Error on the server.' + error);
   }
 });
 
-router.get('/logout', verifyToken, function (req, res) {
+router.post('/check', async function (req, res) {
+  try {
+    var user, idUser, pass;
+    var snapshot = await userCollection.where('email', '==', req.body.email).get();
+    snapshot.forEach(doc => {
+      idUser = doc.id;
+      user = doc.data().email;
+      pass = doc.data().password;
+
+      passwordIsValid = bcrypt.compareSync(req.body.password, pass);
+    });
+
+    if (user && passwordIsValid) {
+      // if user is found and password is valid
+      // create a token
+      var token = jwt.sign({ id: idUser }, config.secret, {
+        expiresIn: 36000 // expires in 24 hours
+      });
+
+      // return the information including token as JSON
+      res.status(200).send({ auth: true, token: token });
+
+    } else if (!user) {
+      var hashedPassword = bcrypt.hashSync(req.body.password, 8);
+
+      var response = await userCollection.add({
+        email: req.body.email,
+        password: hashedPassword
+    })
+    res.json({
+      statusCode: "200",
+      statusResponse: "Ok",
+      message: "Data Berhasil Di Inputkan",
+      dataid: response.id
+    })
+    }
+  } catch (error) {
+    res.status(500).send('Error on the server.' + error);
+  }
+});
+
+router.get('/logout', function (req, res) {
   //  res.removeHeader('x-access-token');
   res.status(200).send({ auth: false, token: null });
 });
