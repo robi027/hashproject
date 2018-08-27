@@ -13,23 +13,20 @@ var header = {
   }
 }
 
-router.get("/deployments/", (req, res, next) => {
+router.get("/deployments/", async (req, res, next) => {
   try {
-    axios.get(deployments, header)
-    .then(
-      res.send(data())
-    )
-    console.log("hello");
+    var response = await axios.get(deployments, header)
+    res.send(response.data);
   } catch (error) {
     console.error(error);
   }
   next();
 })
 
-router.get("/logstream/", (req, res, next) =>{
+router.get("/logstream/", async (req, res, next) =>{
   try {
-    axios.get(logstream, header)
-    // res.send(data);
+    var response = await axios.get(logstream, header)
+    res.send(response.data);
   } catch (error) {
     console.error(error);
   }

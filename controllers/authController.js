@@ -18,16 +18,17 @@ var config = require('../config'); // get config file
 
 router.post('/login', async function (req, res) {
   try {
-    var user, idUser;
+    var user;
+    var idUser;
     var pass;
     var snapshot = await userCollection.where('email', '==', req.body.email).get();
     snapshot.forEach(doc => {
       idUser = doc.id;
       user = doc.data().email;
       pass = doc.data().password;
+      passwordIsValid = bcrypt.compareSync(req.body.password, pass);
     });
-    passwordIsValid = bcrypt.compareSync(req.body.password, pass);
-
+    
     if (user && passwordIsValid) {
       // if user is found and password is valid
       // create a token
