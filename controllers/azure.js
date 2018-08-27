@@ -13,10 +13,12 @@ var header = {
   }
 }
 
-router.get("/deployments/", async (req, res, next) => {
+router.get("/deployments/", (req, res, next) => {
   try {
-    let response = await axios.get(deployments, header)
-    res.send(response.data);
+    axios.get(deployments, header)
+    .then(
+      res.send(data())
+    )
     console.log("hello");
   } catch (error) {
     console.error(error);
@@ -24,10 +26,10 @@ router.get("/deployments/", async (req, res, next) => {
   next();
 })
 
-router.get("/logstream/", async (req, res, next) =>{
+router.get("/logstream/", (req, res, next) =>{
   try {
-    let response = await axios.get(logstream, header)
-    res.send(response.data);
+    axios.get(logstream, header)
+    // res.send(data);
   } catch (error) {
     console.error(error);
   }

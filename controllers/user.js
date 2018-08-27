@@ -14,7 +14,7 @@ const app = express();
           const myData = doc.data();
           allUser.push({
             Username: myData.username,
-            Password: myData.password
+            Password: myData.password 
           });
         });
         res.json({
