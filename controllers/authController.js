@@ -24,8 +24,10 @@ router.post('/login', async function (req, res) {
       idUser = doc.id;
       user = doc.data().email;
       pass = doc.data().password;
-      passwordIsValid = bcrypt.compareSync(req.body.password, pass);
+      
     });
+
+    passwordIsValid = bcrypt.compare(req.body.password, pass);
 
     if (user && passwordIsValid) {
       // if user is found and password is valid
@@ -53,9 +55,8 @@ router.post('/check', async function (req, res) {
       idUser = doc.id;
       user = doc.data().email;
       pass = doc.data().password;
-
-      passwordIsValid = bcrypt.compareSync(req.body.password, pass);
     });
+    passwordIsValid = bcrypt.compare(req.body.password, pass);
 
     if (user && passwordIsValid) {
       // if user is found and password is valid
@@ -68,7 +69,7 @@ router.post('/check', async function (req, res) {
       res.status(200).send({ auth: true, token: token });
 
     } else if (!user) {
-      var hashedPassword = bcrypt.hashSync(req.body.password, 8);
+      var hashedPassword = await bcrypt.hash(req.body.password, 8);
 
       var response = await userCollection.add({
         email: req.body.email,
@@ -93,7 +94,7 @@ router.get('/logout', function (req, res) {
 
 router.post('/register', async function (req, res) {
   try {
-    var hashedPassword = bcrypt.hashSync(req.body.password, 8);
+    var hashedPassword = await bcrypt.hash(req.body.password, 8);
 
     var response = await userCollection.add({
       email: req.body.email,
