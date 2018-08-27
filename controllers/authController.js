@@ -78,8 +78,7 @@ router.post('/check', async function (req, res) {
     res.json({
       statusCode: "200",
       statusResponse: "Ok",
-      message: "Data Berhasil Di Inputkan",
-      dataid: response.id
+      message: "Data Berhasil Di Inputkan"
     })
     }
   } catch (error) {
