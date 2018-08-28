@@ -1,14 +1,12 @@
 const express = require("express");
 const user = require("./controllers/user");
 const azure = require("./controllers/azure");
-const axios = require("./controllers/axiosTest");
-const auth = require('./controllers/authController');
+const auth = require('./controllers/auth');
 const app = express();
 
 //static file
 app.use(express.static(__dirname + '/views'));
 app.use("/azure", azure);
-app.use("/axios", axios);
 app.use("/auth", auth);
 app.use("/user", user)
 //fire controllers
