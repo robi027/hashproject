@@ -5,7 +5,6 @@ var userCollection = require("../firestore");
 var verifyToken = require('./verifyToken');
 var bcrypt = require('bcryptjs');
 
-// router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
 // CREATES A NEW USER

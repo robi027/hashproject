@@ -67,7 +67,10 @@ router.post('/check', async (req, res) => {
         email: req.body.email,
         password: hashedPassword
     })
-    res.status(200).send("Success registering user. " + response.id);
+    var token = jwt.sign({ id: idUser }, config.secret, {
+      expiresIn: 36000 // expires in 24 hours
+    });
+    res.status(200).send("Success registering user.\n Token: " + token);
     }
   } catch (error) {
     res.status(500).send('Error on the server.' + error);
