@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var bodyParser = require('body-parser');
 var db = require("../firestore");
-var userCollection = db.userCollection('user');
+var userCollection = db.collection("user");
 var verifyToken = require('./verifyToken');
 var bcrypt = require('bcryptjs');
 

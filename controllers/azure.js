@@ -2,7 +2,9 @@ const express = require("express");
 var axios = require("axios");
 const router = express.Router();
 var db = require("../firestore");
-var resourceCollection = db.resourceCollection('user');
+var resourceCollection = db.collection("resources");
+var bodyParser = require("body-parser");
+router.use(bodyParser.json());
 
 
 const deployments = "https://dummy-hash.scm.azurewebsites.net/api/deployments";
@@ -34,13 +36,25 @@ router.get("/logstream/", async (req, res, next) =>{
   }
 })
 
-router.get("/resource", async (req, res, next) =>{
+router.post("/resource", async (req, res, next) =>{
   try{
-    var response = await resourceCollection.get();
-    response.forEach(doc => {
-      console.log(doc);
-    });    
+    var id = req.body.id;
+    var response = await resourceCollection.doc(id).get();
+    res.status(200).send(response.data());
+    // console.log(Object.keys(response.data()));
   }catch(error) {
+    console.log(error);
+  }
+})
+
+router.get('/resource', async (req, res, next) => {
+  try {
+    var response = await resourceCollection.doc(id).update({
+      name : name,
+      type : type,
+      slot : slot
+    })
+  } catch (error) {
     console.log(error);
   }
 })
