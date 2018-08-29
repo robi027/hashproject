@@ -9,6 +9,6 @@ admin.initializeApp({
 var db = admin.firestore();
 db.settings({ timestampsInSnapshots: true });
 
-const userCollection = db.collection("user");
+// const userCollection = db.collection("user");
 
-module.exports = userCollection;
+module.exports = db;

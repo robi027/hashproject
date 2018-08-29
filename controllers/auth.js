@@ -25,7 +25,7 @@ router.post('/login', async (req, res) => {
       // if user is found and password is valid
       // create a token
       var token = jwt.sign({ id: idUser }, config.secret, {
-        expiresIn: 36000 // expires in 24 hours
+        expiresIn: 2592000 // expires in 24 hours
       });
       // return the information including token as JSON
       res.status(200).send({ auth: true, token: token });

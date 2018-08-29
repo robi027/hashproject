@@ -1,6 +1,8 @@
 const express = require("express");
 var axios = require("axios");
 const router = express.Router();
+var db = require("../firestore");
+var resourceCollection = db.resourceCollection('user');
 
 
 const deployments = "https://dummy-hash.scm.azurewebsites.net/api/deployments";
@@ -29,6 +31,17 @@ router.get("/logstream/", async (req, res, next) =>{
     res.send(response.data);
   } catch (error) {
     console.error(error);
+  }
+})
+
+router.get("/resource", async (req, res, next) =>{
+  try{
+    var response = await resourceCollection.get();
+    response.forEach(doc => {
+      console.log(doc);
+    });    
+  }catch(error) {
+    console.log(error);
   }
 })
 
