@@ -3,6 +3,7 @@ var axios = require("axios");
 const router = express.Router();
 var db = require("../firestore");
 var resourceCollection = db.collection("resources");
+var authCollection = db.collection("auth");
 var bodyParser = require("body-parser");
 router.use(bodyParser.json());
 
@@ -14,18 +15,35 @@ const logstream = "https://dummy-hash.scm.azurewebsites.net/api/logstream";
 // var encode = username + ":" + pass;
 // var buff = new Buffer(encode);  
 // var base64data = buff.toString('base64');
-var header = {
-  headers: {
-    "Authorization" : "Basic cm9iaTAyNzptbmJ2Y3h6MTIzMjc="
+// global.header =
+//   {
+//     headers: {
+//       "Authorization" : `Basic ${datane}`
+//     }
+//   }
+
+var get = async () => {
+  var basic;
+  var response = await authCollection.get();
+  response.forEach(doc =>{
+    basic = doc.data().basicAuth;
+  })
+  var header = 
+  {
+    headers: {
+      "Authorization" : `Basic ${basic}`
+    }
   }
+  console.log(header);
+  return header;
 }
 
 router.get("/deployments/", async (req, res, next) => {
   try {
-    var response = await axios.get(deployments, header)
+    var response = await axios.get(deployments, await get)
     res.send(response.data);
   } catch (error) {
-    console.error(error);
+    console.error("Errornya " + error);
   }
   next();
 })
@@ -43,11 +61,11 @@ router.post("/resources", async (req, res, next) =>{
   try{
     var id = req.body.id;
     if(id){
-      var response1 = await resourceCollection.doc(id).get();
-      res.status(200).send(response1.data());
+      var response1 = await resourceCollection.doc(id).get()
+      res.status(200).send(response1.data())
     } else{
-      var response = await resourceCollection.get();
-      res.status(200).send(response.data());
+      var response = await resourceCollection.get()
+      res.status(200).send(response.data())
     }
     // console.log(Object.keys(response.data()));
   }catch(error) {
