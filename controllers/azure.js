@@ -1,13 +1,9 @@
 const express = require("express");
 var axios = require("axios");
 const router = express.Router();
-<<<<<<< HEAD
 var db = require("../firestore");
 var resourceCollection = db.collection("resources");
 var bodyParser = require("body-parser");
-=======
-var bodyParser = require("body-parser")
->>>>>>> d956e3e9253c3b1db9bbcb35d30ef05ec919d116
 router.use(bodyParser.json());
 
 
