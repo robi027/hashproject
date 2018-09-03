@@ -40,7 +40,7 @@ var get = async () => {
 
 router.get("/deployments/", async (req, res, next) => {
   try {
-    var response = await axios.get(deployments, await get)
+    var response = await axios.get(deployments, await get())
     res.send(response.data);
   } catch (error) {
     console.error("Errornya " + error);
