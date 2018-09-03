@@ -1,13 +1,9 @@
 const express = require("express");
 var axios = require("axios");
 const router = express.Router();
-<<<<<<< HEAD
 var db = require("../firestore");
 var resourceCollection = db.collection("resources");
 var bodyParser = require("body-parser");
-=======
-var bodyParser = require("body-parser")
->>>>>>> d956e3e9253c3b1db9bbcb35d30ef05ec919d116
 router.use(bodyParser.json());
 
 
@@ -18,11 +14,11 @@ const logstream = "https://dummy-hash.scm.azurewebsites.net/api/logstream";
 // var encode = username + ":" + pass;
 // var buff = new Buffer(encode);  
 // var base64data = buff.toString('base64');
-// var header = {
-//   headers: {
-//     "Authorization" : "Basic "
-//   }
-// }
+var header = {
+  headers: {
+    "Authorization" : "Basic cm9iaTAyNzptbmJ2Y3h6MTIzMjc="
+  }
+}
 
 router.get("/deployments/", async (req, res, next) => {
   try {
@@ -43,25 +39,18 @@ router.get("/logstream/", async (req, res, next) => {
   }
 })
 
-router.post("/resource", async (req, res, next) =>{
+router.post("/resources", async (req, res, next) =>{
   try{
     var id = req.body.id;
-    var response = await resourceCollection.doc(id).get();
-    res.status(200).send(response.data());
+    if(id){
+      var response1 = await resourceCollection.doc(id).get();
+      res.status(200).send(response1.data());
+    } else{
+      var response = await resourceCollection.get();
+      res.status(200).send(response.data());
+    }
     // console.log(Object.keys(response.data()));
   }catch(error) {
-    console.log(error);
-  }
-})
-
-router.get('/resource', async (req, res, next) => {
-  try {
-    var response = await resourceCollection.doc(id).update({
-      name : name,
-      type : type,
-      slot : slot
-    })
-  } catch (error) {
     console.log(error);
   }
 })
