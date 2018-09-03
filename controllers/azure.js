@@ -3,6 +3,7 @@ var axios = require("axios");
 const router = express.Router();
 var db = require("../firestore");
 var resourceCollection = db.collection("resources");
+var authCollection = db.collection("auth");
 var bodyParser = require("body-parser");
 router.use(bodyParser.json());
 
@@ -14,15 +15,37 @@ const logstream = "https://dummy-hash.scm.azurewebsites.net/api/logstream";
 // var encode = username + ":" + pass;
 // var buff = new Buffer(encode);  
 // var base64data = buff.toString('base64');
-var header = {
-  headers: {
-    "Authorization" : "Basic cm9iaTAyNzptbmJ2Y3h6MTIzMjc="
+var auth = (username, pass) => {  
+    var encode = username + ":" + pass;
+    console.log(encode);
+    var buff = new Buffer(encode);  
+    base64data = buff.toString('base64');
+    console.log(base64data);
+    return base64data;
+}
+
+var basicAuth = async () => {
+  try {
+    var response = await authCollection.get();
+    response.forEach(doc => {
+    data = doc.data().basicAuth;
+    });
+    var header = {
+      headers: {
+        "Authorization" : "Basic " + data
+      }
+    }
+    return header;
+  } catch (error) {
+    console.log(error);
   }
 }
 
 router.get("/deployments/", async (req, res, next) => {
   try {
-    var response = await axios.get(deployments, header)
+    //auth(req.query.username, req.query.password);
+    //console.log(req.query.username, req.query.password)
+    var response = await axios.get(deployments, await basicAuth())
     res.send(response.data);
   } catch (error) {
     console.error(error);
