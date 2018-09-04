@@ -4,12 +4,14 @@ const router = express.Router();
 var db = require("../firestore");
 var resourceCollection = db.collection("resources");
 var authCollection = db.collection("auth");
+var verifyToken = require('./verifyToken');
+var bcrypt = require('bcryptjs');
 var bodyParser = require("body-parser");
 router.use(bodyParser.json());
 
-
 const deployments = "https://dummy-hash.scm.azurewebsites.net/api/deployments";
 const logstream = "https://dummy-hash.scm.azurewebsites.net/api/logstream";
+<<<<<<< HEAD
 // var username = req.body.username;
 // var pass = req.body.password;
 // var encode = username + ":" + pass;
@@ -23,6 +25,8 @@ var auth = (username, pass) => {
   console.log(base64data);
   return base64data;
 }
+=======
+>>>>>>> 5b509692cfa64ca0b70a386ad89a94bcbd11ec05
 
 var basicAuth = async () => {
   try {
@@ -43,17 +47,16 @@ var basicAuth = async () => {
   return header;
 }
 
-router.get("/deployments/", async (req, res, next) => {
+router.get("/deployments", async (req, res, next) => {
   try {
     var response = await axios.get(deployments, await basicAuth())
     res.send(response.data);
   } catch (error) {
     console.error("Errornya " + error);
   }
-  next();
 })
 
-router.get("/logstream/", async (req, res, next) => {
+router.get("/logstream", async (req, res, next) => {
   try {
     var response = await axios.get(logstream, await basicAuth())
     res.send(response.data);
@@ -142,6 +145,79 @@ router.get("/decode/:data", async (req, res, next) => {
     res.send('"' + data + '" converted from Base64 to ASCII is "' + text + '"');
   } catch (error) {
     console.error(error);
+  }
+})
+
+//GET ALL BASICAUTH
+router.get("/auth", async (req, res) => {
+  try {
+    let all = [];
+    var response = await authCollection.get();
+    response.forEach(doc => {
+      all.push({
+        basicAuth: doc.data().basicAuth,
+        username: doc.data().username,
+        password: doc.data().password
+      });
+    });
+    res.status(200).send(all);
+  } catch (error) {
+    res.status(500).send("There was a problem retrieving the information from the database. " + error);
+  }
+})
+
+//ADD NEW BASICAUTH
+router.post("/auth", async (req, res) => {
+  try {
+    var encode = req.body.username + ":" + req.body.password;
+    console.log(encode);
+    var buff = new Buffer(encode);  
+    var base64data = buff.toString('base64');
+    console.log(base64data);
+
+    var user, idUser, pass, basicAuth;
+        var snapshot = await authCollection.where('username', '==', req.body.username).get();
+        snapshot.forEach(doc => {
+            idUser = doc.id;
+            basicAuth = doc.data().basicAuth;
+            user = doc.data().username;
+            pass = doc.data().password;
+        });
+    
+        if (user) {
+         res.status(200).send("Auth already exist.");
+        } else {
+            var hashedPassword = await bcrypt.hash(req.body.password, 8);
+
+            var response = await authCollection.add({
+                basicAuth: base64data,
+                username: req.body.username,
+                password: hashedPassword
+            })
+      res.status(200).send("Success adding auth. " + response.id);
+        }
+  } catch (error) {
+    
+  }
+})
+
+//UPDATE EXISTING BASICAUTH
+router.put("/auth", async (req, res) => {
+  try {
+    var encode = req.body.username + ":" + req.body.password;
+    console.log(encode);
+    var buff = new Buffer(encode);  
+    var base64data = buff.toString('base64');
+    console.log(base64data);
+    var hashedPassword = await bcrypt.hash(req.body.password, 8);
+    var response = await authCollection.doc(req.body.id).update({
+      basicAuth : base64data,
+      username : req.body.username,
+      password : hashedPassword
+      })
+      res.status(200).send("Success updating auth. " + response.id);
+  } catch (error) {
+    res.status(500).send("There was a problem updating auth. " + error);
   }
 })
 
