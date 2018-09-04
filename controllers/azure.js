@@ -11,22 +11,17 @@ router.use(bodyParser.json());
 
 const deployments = "https://dummy-hash.scm.azurewebsites.net/api/deployments";
 const logstream = "https://dummy-hash.scm.azurewebsites.net/api/logstream";
-<<<<<<< HEAD
-// var username = req.body.username;
-// var pass = req.body.password;
-// var encode = username + ":" + pass;
-// var buff = new Buffer(encode);  
-// var base64data = buff.toString('base64');
-var auth = (username, pass) => {
-  var encode = username + ":" + pass;
-  console.log(encode);
-  var buff = new Buffer(encode);
-  base64data = buff.toString('base64');
-  console.log(base64data);
-  return base64data;
+
+var hai = async () => {
+  try {
+    var response = await resourceCollection.doc("mCEvm3sFcxVSFz6YmrU7").get()
+    console.log(response.data().slot.deploy);
+    var hello = response.data().slot.deploy;
+    return hello;
+  } catch (error) {
+    console.log(error);    
+  }
 }
-=======
->>>>>>> 5b509692cfa64ca0b70a386ad89a94bcbd11ec05
 
 var basicAuth = async () => {
   try {
