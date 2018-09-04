@@ -11,26 +11,10 @@ router.use(bodyParser.json());
 
 const deployments = "https://dummy-hash.scm.azurewebsites.net/api/deployments";
 const logstream = "https://dummy-hash.scm.azurewebsites.net/api/logstream";
-<<<<<<< HEAD
-// var username = req.body.username;
-// var pass = req.body.password;
-// var encode = username + ":" + pass;
-// var buff = new Buffer(encode);  
-// var base64data = buff.toString('base64');
-var auth = (username, pass) => {
-  var encode = username + ":" + pass;
-  console.log(encode);
-  var buff = new Buffer(encode);
-  base64data = buff.toString('base64');
-  console.log(base64data);
-  return base64data;
-}
-=======
->>>>>>> 5b509692cfa64ca0b70a386ad89a94bcbd11ec05
 
 var basicAuth = async () => {
   try {
-    var response = await authCollection.get();
+    var response = await authCollection.where('status', '==', true).get();
     response.forEach(doc => {
       data = doc.data().basicAuth;
     });
@@ -98,11 +82,11 @@ router.post("/resources", async (req, res, next) => {
   }
 })
 
-router.put("/resources", async (req, res, next) => {
+router.put("/resources/:id", async (req, res, next) => {
   try {
     var slot = req.body.slot;
     var data = { name: req.body.name, slot, type: req.body.type };
-    await resourceCollection.doc(req.body.id).update(data);
+    await resourceCollection.doc(req.params.id).update(data);
     res.status(200).send(data);
   } catch (error) {
     console.log(error);
@@ -110,10 +94,10 @@ router.put("/resources", async (req, res, next) => {
   }
 })
 
-router.delete("/resources", async (req, res, next) => {
+router.delete("/resources/:id", async (req, res, next) => {
   try {
-    await resourceCollection.doc(req.body.id).delete();
-    res.status(200).send({ id: req.body.id, Message: "Delete Success"});
+    await resourceCollection.doc(req.params.id).delete();
+    res.status(200).send({ id: req.params.id, Message: "Delete Success"});
   } catch (error) {
     console.log(error);
     res.status(500).send({Message : "Internal Server Error"});
@@ -192,17 +176,18 @@ router.post("/auth", async (req, res) => {
             var response = await authCollection.add({
                 basicAuth: base64data,
                 username: req.body.username,
-                password: hashedPassword
+                password: hashedPassword,
+                status: false
             })
       res.status(200).send("Success adding auth. " + response.id);
         }
   } catch (error) {
-    
+    res.status(500).send("There was a problem adding the information to the database. " + error);
   }
 })
 
 //UPDATE EXISTING BASICAUTH
-router.put("/auth", async (req, res) => {
+router.put("/auth/:id", async (req, res) => {
   try {
     var encode = req.body.username + ":" + req.body.password;
     console.log(encode);
@@ -210,7 +195,7 @@ router.put("/auth", async (req, res) => {
     var base64data = buff.toString('base64');
     console.log(base64data);
     var hashedPassword = await bcrypt.hash(req.body.password, 8);
-    var response = await authCollection.doc(req.body.id).update({
+    var response = await authCollection.doc(req.params.id).update({
       basicAuth : base64data,
       username : req.body.username,
       password : hashedPassword
@@ -218,6 +203,17 @@ router.put("/auth", async (req, res) => {
       res.status(200).send("Success updating auth. " + response.id);
   } catch (error) {
     res.status(500).send("There was a problem updating auth. " + error);
+  }
+})
+
+//DELETES SINGLE BASICAUTH
+router.delete("/auth/:id", async (req, res) => {
+  try {
+    await authCollection.doc(req.params.id).delete();
+    res.status(200).send({ id: req.params.id, Message: "Delete Success"});
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({Message : "Internal Server Error"});
   }
 })
 
