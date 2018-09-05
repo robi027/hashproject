@@ -70,5 +70,16 @@ router.put('/', /* VerifyToken, */ async (req, res) => {
     }
 });
 
+// DELETES A USER FROM THE DATABASE
+router.delete('/:id', async (req, res) => {
+    try {
+        await userCollection.doc(req.params.id).delete();
+    res.status(200).send({ id: req.params.id, Message: "Delete Success"});
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({Message : "Internal Server Error"});
+    }
+})
+
 
 module.exports = router;
