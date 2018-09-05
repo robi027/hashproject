@@ -12,21 +12,24 @@ router.use(bodyParser.json());
 const deployments = "https://dummy-hash.scm.azurewebsites.net/api/deployments";
 const logstream = "https://dummy-hash.scm.azurewebsites.net/api/logstream";
 
+
 const hai = async () => {
   try {
     
     var item = [];
+    var itemObj ={};
     var response = await resourceCollection.doc("sbdg73M5OxBOu0d6BSWo").get();
     for (var prop in response.data().slot) {
-      item = response.data().slot[prop]+"api/deployments"
-      console.log(item)
+      itemObj = prop
+      itemValue = response.data().slot[prop]+"api/deployments"
+      // console.log(itemObj)
+      // console.log(itemValue)
+      item.push({
+        itemObj
+      })
     }
     console.log(item);
-    // var hello = response.data().slot.slot2
-    // console.log(hello);
-    // var url = hello+"api/deployments"
-    // console.log(url);
-    // return url;
+
   } catch (error) {
     console.log(error);
   }  
@@ -55,7 +58,6 @@ router.get("/deployments", async (req, res, next) => {
   try {
     var response = await axios.get(await hai(), await basicAuth())
     res.send(response.data);
-    
   } catch (error) {
     console.error("Errornya " + error);
   }
