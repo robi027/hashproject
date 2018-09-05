@@ -14,22 +14,17 @@ const logstream = "https://dummy-hash.scm.azurewebsites.net/api/logstream";
 
 
 const hai = async () => {
-  try {
-    
+  try {    
     var item = [];
-    var itemObj ={};
     var response = await resourceCollection.doc("sbdg73M5OxBOu0d6BSWo").get();
     for (var prop in response.data().slot) {
-      itemObj = prop
-      itemValue = response.data().slot[prop]+"api/deployments"
-      // console.log(itemObj)
-      // console.log(itemValue)
+      var itemObj = prop
+      var itemValue = response.data().slot[prop]+"api/deployments"
       item.push({
-        itemObj
+        [itemObj] : itemValue
       })
     }
-    console.log(item);
-
+    return item;
   } catch (error) {
     console.log(error);
   }  
@@ -56,8 +51,17 @@ var basicAuth = async () => {
 
 router.get("/deployments", async (req, res, next) => {
   try {
-    var response = await axios.get(await hai(), await basicAuth())
-    res.send(response.data);
+    var hello = await hai();
+    let tolol = [];
+    console.log(hello);
+    for (let i = 0; i < hello.length; i++) {
+      var otong = Object.values(hello[i])
+      var response = await axios.get(otong.toString(), await basicAuth())
+      tolol.push({
+        data : response.data
+      })
+    }
+    res.status(200).send(tolol);
   } catch (error) {
     console.error("Errornya " + error);
   }
