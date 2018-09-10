@@ -12,6 +12,31 @@ router.use(bodyParser.json());
 const deployments = "https://dummy-hash.scm.azurewebsites.net/api/deployments";
 const logstream = "https://dummy-hash.scm.azurewebsites.net/api/logstream";
 
+router.get("/", async (req, res, next) => {
+  try {
+    var resource= [];
+    var slototong = []
+    var response = await resourceCollection.get();
+    response.forEach(doc => {
+      var name = doc.data().name;
+      var type = doc.data().type;
+      var slot = Object.values(doc.data().slot);
+      if(type == "be"){
+        for (var prop in slot ){
+          var itemValue = slot[prop]+"api/deployments"
+          slototong.push(itemValue);
+        }
+        resource.push({ name, slot: slototong });
+      }else{
+        resource.push({ name, slot });
+      }
+    })
+    res.send(resource);
+  } catch (error) {
+    console.log(error);
+  }
+
+})
 
 const hai = async () => {
   try {    
@@ -61,7 +86,7 @@ router.get("/deployments", async (req, res, next) => {
         data : response.data
       })
     }
-    res.status(200).send(tolol);
+    res.status(200).send(tolol)
   } catch (error) {
     console.error("Errornya " + error);
   }
