@@ -1,15 +1,15 @@
-var express = require('express');
-var router = express.Router();
-var bodyParser = require('body-parser');
-var db = require("../firestore");
-var userCollection = db.collection("user");
-var verifyToken = require('./verifyToken');
-var bcrypt = require('bcryptjs');
+const express = require('express');
+const router = express.Router();
+const bodyParser = require('body-parser');
+const db = require("../firestore");
+const userCollection = db.collection("user");
+const verifyToken = require('./verifyToken');
+const bcrypt = require('bcryptjs');
 
 router.use(bodyParser.json());
 
 // CREATES A NEW USER
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
     try {
         var user, idUser, pass;
         var snapshot = await userCollection.where('email', '==', req.body.email).get();
@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
 });
 
 // RETURNS ALL THE USERS IN THE DATABASE
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
     try {
         let allUser = [];
         var response = await userCollection.get();
@@ -57,7 +57,7 @@ router.get('/', async (req, res) => {
 
 // UPDATES A SINGLE USER IN THE DATABASE
 // Added VerifyToken middleware to make sure only an authenticated user can put to this route
-router.put('/', /* VerifyToken, */ async (req, res) => {
+router.put('/', verifyToken, async (req, res) => {
     try {
         var hashedPassword = await bcrypt.hash(req.body.password, 8);
         var response = await userCollection.doc(req.body.id).update({
@@ -71,7 +71,7 @@ router.put('/', /* VerifyToken, */ async (req, res) => {
 });
 
 // DELETES A USER FROM THE DATABASE
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyToken, async (req, res) => {
     try {
         await userCollection.doc(req.params.id).delete();
     res.status(200).send({ id: req.params.id, Message: "Delete Success"});
