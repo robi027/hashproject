@@ -41,21 +41,28 @@ const deploymentsbaru = async () => {
   }
 }
 
-const deployments = async (params) => {
-  try {    
-    var item = [];
-    var response = await resourceCollection.doc(params).get();
-    for (var prop in response.data().slot) {
-      var itemObj = prop;
-      var itemValue = response.data().slot[prop]+"api/deployments"
-      item.push({
-        [itemObj] : itemValue
-      })
-    }
-    return item;
+const deployments = async () => {
+  try {
+    var resource= [];
+    var slotValue = [];
+    var response = await resourceCollection.get();
+    response.forEach(doc => {
+      var name = doc.data().name;
+      var type = doc.data().type;
+      var slot = doc.data().slot;
+      if(type == "be"){
+        for (var prop in slot ){
+          slot[prop] = slot[prop]+"api/deployments"
+        }
+        resource.push({ name, slot});
+      }else{
+        resource.push({ name, slot });
+      }
+    })
+    return resource;
   } catch (error) {
     console.log(error);
-  }  
+  }
 }
 
 const basicAuth = async () => {
@@ -69,6 +76,7 @@ const basicAuth = async () => {
         "Authorization": "Basic " + data
       }
     }
+    console.log(header);
     return header;
   } catch (error) {
     console.log(error);
@@ -77,42 +85,16 @@ const basicAuth = async () => {
 
 router.get("/deployments", async (req, res) => {
   try {
-    var deploy = await deploymentsbaru();
-    for (let i = 0; i < deploy.length; i++) {
-      var result = deploy[i].name;
-      var resultslot = deploy[i].slot;
-      console.log(result);
-      for(var prop in resultslot){
-        console.log(prop);
-        console.log(resultslot[prop]);
-        var hasil = resultslot[prop];
-        
-        var response = await axios.get(hasil, await basicAuth(), (res) =>{
-          try {
-            
-              res = response.data;
-          } catch (error) {
-            console.log("Error Callback" + error);
-          }          
-        });
-        
-        
-        // console.log(datanya);
+    var deploy = await deployments();
+    var map = deploy.map(doc => Object.values(doc.slot));
+    console.log(map);
+    for(var i = 0; i<map.length; i++){
+      var item = map[i];
+      for(var prop in item){
+        var response = await axios.get(item[prop], await basicAuth());
+        console.log(response.data);
       }
-      // for(var prop in resultslot){
-      //   var hello = resultslot[prop];
-        
-        
-        // var response = await axios.get(resulthasilslot, await basicAuth());
-        // var datanya = response.data;
-      // }
-      // console.log(itemslot);
-      // item.push({
-      //   name : result,
-      //   resultslot
-      // })
     }
-    res.status(200).send(itemslot);
   } catch (error) {
     console.error("Errornya " + error);
   } 
