@@ -1,21 +1,20 @@
 const express = require("express");
-var axios = require("axios");
+const axios = require("axios");
 const router = express.Router();
-var db = require("../firestore");
-var resourceCollection = db.collection("resources");
-var authCollection = db.collection("auth");
-var verifyToken = require('./verifyToken');
-var bcrypt = require('bcryptjs');
-var bodyParser = require("body-parser");
+const db = require("../firestore");
+const resourceCollection = db.collection("resources");
+const authCollection = db.collection("auth");
+const verifyToken = require('./verifyToken');
+const bcrypt = require('bcryptjs');
+const bodyParser = require("body-parser");
 router.use(bodyParser.json());
 
-const deployments = "https://dummy-hash.scm.azurewebsites.net/api/deployments";
 const logstream = "https://dummy-hash.scm.azurewebsites.net/api/logstream";
 
 router.get("/", async (req, res, next) => {
   try {
     var resource= [];
-    var slototong = []
+    var slototong = [];
     var response = await resourceCollection.get();
     response.forEach(doc => {
       var name = doc.data().name;
@@ -35,15 +34,14 @@ router.get("/", async (req, res, next) => {
   } catch (error) {
     console.log(error);
   }
-
 })
 
-const hai = async () => {
+const deployments = async (params) => {
   try {    
     var item = [];
-    var response = await resourceCollection.doc("sbdg73M5OxBOu0d6BSWo").get();
+    var response = await resourceCollection.doc(params).get();
     for (var prop in response.data().slot) {
-      var itemObj = prop
+      var itemObj = prop;
       var itemValue = response.data().slot[prop]+"api/deployments"
       item.push({
         [itemObj] : itemValue
@@ -55,7 +53,7 @@ const hai = async () => {
   }  
 }
 
-var basicAuth = async () => {
+const basicAuth = async () => {
   try {
     var response = await authCollection.where('status', '==', true).get();
     response.forEach(doc => {
@@ -74,25 +72,25 @@ var basicAuth = async () => {
   return header;
 }
 
-router.get("/deployments", async (req, res, next) => {
+router.get("/deployments", verifyToken, async (req, res) => {
   try {
-    var hello = await hai();
-    let tolol = [];
-    console.log(hello);
-    for (let i = 0; i < hello.length; i++) {
-      var otong = Object.values(hello[i])
-      var response = await axios.get(otong.toString(), await basicAuth())
-      tolol.push({
+    var deploy = await deployments(req.params.id);
+    let item = [];
+    console.log(deploy);
+    for (let i = 0; i < deploy.length; i++) {
+      var result = Object.values(deploy[i])
+      var response = await axios.get(result.toString(), await basicAuth())
+      item.push({
         data : response.data
       })
     }
-    res.status(200).send(tolol)
+    res.status(200).send(item);
   } catch (error) {
     console.error("Errornya " + error);
   }
 })
 
-router.get("/logstream", async (req, res, next) => {
+router.get("/logstream", verifyToken, async (req, res) => {
   try {
     var response = await axios.get(logstream, await basicAuth())
     res.send(response.data);
@@ -101,7 +99,7 @@ router.get("/logstream", async (req, res, next) => {
   }
 })
 
-router.get("/resources", async (req, res, next) => {
+router.get("/resources", verifyToken, async (req, res) => {
   try {
     var allResources = [];
     var id = req.query.id;
@@ -122,7 +120,7 @@ router.get("/resources", async (req, res, next) => {
   }
 })
 
-router.post("/resources", async (req, res, next) => {
+router.post("/resources", verifyToken, async (req, res) => {
   try {
     var slot = req.body.slot;
     var data = { name: req.body.name, slot, type: req.body.type };
@@ -134,7 +132,7 @@ router.post("/resources", async (req, res, next) => {
   }
 })
 
-router.put("/resources/:id", async (req, res, next) => {
+router.put("/resources/:id", verifyToken, async (req, res) => {
   try {
     var slot = req.body.slot;
     var data = { name: req.body.name, slot, type: req.body.type };
@@ -146,7 +144,7 @@ router.put("/resources/:id", async (req, res, next) => {
   }
 })
 
-router.delete("/resources/:id", async (req, res, next) => {
+router.delete("/resources/:id", verifyToken, async (req, res) => {
   try {
     await resourceCollection.doc(req.params.id).delete();
     res.status(200).send({ id: req.params.id, Message: "Delete Success"});
@@ -156,36 +154,8 @@ router.delete("/resources/:id", async (req, res, next) => {
   }
 })
 
-
-router.post("/encode", async (req, res, next) => {
-  try {
-    var username = req.body.username;
-    var pass = req.body.password;
-    var encode = username + ":" + pass;
-    console.log(encode);
-    var buff = new Buffer(encode);
-    var base64data = buff.toString('base64');
-    console.log(base64data);
-    res.send('"' + encode + '" converted to Base64 is "' + base64data + '"');
-  } catch (error) {
-    res.send(error);
-  }
-})
-
-router.get("/decode/:data", async (req, res, next) => {
-  try {
-    let data = req.params.data;
-    let buff = new Buffer(data, 'base64');
-    let text = buff.toString('ascii');
-
-    res.send('"' + data + '" converted from Base64 to ASCII is "' + text + '"');
-  } catch (error) {
-    console.error(error);
-  }
-})
-
 //GET ALL BASICAUTH
-router.get("/auth", async (req, res) => {
+router.get("/auth", verifyToken, async (req, res) => {
   try {
     let all = [];
     var response = await authCollection.get();
@@ -203,7 +173,7 @@ router.get("/auth", async (req, res) => {
 })
 
 //ADD NEW BASICAUTH
-router.post("/auth", async (req, res) => {
+router.post("/auth", verifyToken, async (req, res) => {
   try {
     var encode = req.body.username + ":" + req.body.password;
     console.log(encode);
@@ -239,7 +209,7 @@ router.post("/auth", async (req, res) => {
 })
 
 //UPDATE EXISTING BASICAUTH
-router.put("/auth/:id", async (req, res) => {
+router.put("/auth/:id", verifyToken, async (req, res) => {
   try {
     var encode = req.body.username + ":" + req.body.password;
     console.log(encode);
@@ -259,7 +229,7 @@ router.put("/auth/:id", async (req, res) => {
 })
 
 //DELETES SINGLE BASICAUTH
-router.delete("/auth/:id", async (req, res) => {
+router.delete("/auth/:id", verifyToken, async (req, res) => {
   try {
     await authCollection.doc(req.params.id).delete();
     res.status(200).send({ id: req.params.id, Message: "Delete Success"});

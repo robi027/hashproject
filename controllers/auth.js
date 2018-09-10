@@ -1,13 +1,13 @@
-var express = require('express');
-var router = express.Router();
-var bodyParser = require('body-parser');
-var db = require("../firestore");
-var userCollection = db.collection("user");
-var verifyToken = require('./verifyToken');
+const express = require('express');
+const router = express.Router();
+const bodyParser = require('body-parser');
+const db = require("../firestore");
+const userCollection = db.collection("user");
+const verifyToken = require('./verifyToken');
 //configure jwt
-var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
-var bcrypt = require('bcryptjs');
-var config = require('../config'); // get config file
+const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
+const bcrypt = require('bcryptjs');
+const config = require('../config'); // get config file
 
 router.use(bodyParser.json());
 
