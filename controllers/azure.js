@@ -44,13 +44,12 @@ const deployments = async () => {
     response.forEach(doc => {
       var name = doc.data().name;
       var type = doc.data().type;
-      var slot = Object.values(doc.data().slot);
+      var slot = doc.data().slot;
       if(type == "be"){
         for (var prop in slot ){
-          var itemValue = slot[prop]+"api/deployments"
-          slotValue.push(itemValue);
+          slot[prop] = slot[prop]+"api/deployments"
         }
-        resource.push({ name, slot: slotValue });
+        resource.push({ name, slot});
       }else{
         resource.push({ name, slot });
       }
@@ -72,21 +71,25 @@ const basicAuth = async () => {
         "Authorization": "Basic " + data
       }
     }
+    console.log(header);
     return header;
   } catch (error) {
     console.log(error);
   }
-  console.log(header);
-  return header;
 }
 
 router.get("/deployments", verifyToken, async (req, res) => {
   try {
-    var deploy = [await deployments()];
-    deploy.map(doc => {
-      console.log(doc);
-      res.send(doc);
-    })
+    var deploy = await deployments();
+    var map = deploy.map(doc => Object.values(doc.slot));
+    console.log(map);
+    for(var i = 0; i<map.length; i++){
+      var item = map[i];
+      for(var prop in item){
+        var response = await axios.get(item[prop], await basicAuth());
+        console.log(response.data);
+      }
+    }
   } catch (error) {
     console.error("Errornya " + error);
   }
