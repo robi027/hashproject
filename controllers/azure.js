@@ -36,21 +36,29 @@ router.get("/", async (req, res, next) => {
   }
 })
 
-const deployments = async (params) => {
-  try {    
-    var item = [];
-    var response = await resourceCollection.doc(params).get();
-    for (var prop in response.data().slot) {
-      var itemObj = prop;
-      var itemValue = response.data().slot[prop]+"api/deployments"
-      item.push({
-        [itemObj] : itemValue
-      })
-    }
-    return item;
+const deployments = async () => {
+  try {
+    var resource= [];
+    var slotValue = [];
+    var response = await resourceCollection.get();
+    response.forEach(doc => {
+      var name = doc.data().name;
+      var type = doc.data().type;
+      var slot = Object.values(doc.data().slot);
+      if(type == "be"){
+        for (var prop in slot ){
+          var itemValue = slot[prop]+"api/deployments"
+          slotValue.push(itemValue);
+        }
+        resource.push({ name, slot: slotValue });
+      }else{
+        resource.push({ name, slot });
+      }
+    })
+    return resource;
   } catch (error) {
     console.log(error);
-  }  
+  }
 }
 
 const basicAuth = async () => {
@@ -74,17 +82,11 @@ const basicAuth = async () => {
 
 router.get("/deployments", verifyToken, async (req, res) => {
   try {
-    var deploy = await deployments(req.params.id);
-    let item = [];
-    console.log(deploy);
-    for (let i = 0; i < deploy.length; i++) {
-      var result = Object.values(deploy[i])
-      var response = await axios.get(result.toString(), await basicAuth())
-      item.push({
-        data : response.data
-      })
-    }
-    res.status(200).send(item);
+    var deploy = [await deployments()];
+    deploy.map(doc => {
+      console.log(doc);
+      res.send(doc);
+    })
   } catch (error) {
     console.error("Errornya " + error);
   }
