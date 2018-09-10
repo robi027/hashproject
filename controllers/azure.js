@@ -11,30 +11,35 @@ router.use(bodyParser.json());
 
 const logstream = "https://dummy-hash.scm.azurewebsites.net/api/logstream";
 
-router.get("/", async (req, res, next) => {
+const deploymentsbaru = async () => {
   try {
     var resource= [];
-    var slototong = [];
     var response = await resourceCollection.get();
     response.forEach(doc => {
       var name = doc.data().name;
       var type = doc.data().type;
-      var slot = Object.values(doc.data().slot);
+      var slot = doc.data().slot;
+      // if(type == "be"){
+      //   const result = Object.keys(slot).reduce((acc, key) =>{
+      //     acc[key] = slot[key] + "api/deployments"
+      //     return acc;
+      //   }, {});
+      //   resource.push({ name, slot: result});
+      // }
       if(type == "be"){
-        for (var prop in slot ){
-          var itemValue = slot[prop]+"api/deployments"
-          slototong.push(itemValue);
-        }
-        resource.push({ name, slot: slototong });
+        for (var prop in slot){
+          slot[prop] = slot[prop]+"api/deployments";
+        }        
+        resource.push({ name, slot});
       }else{
         resource.push({ name, slot });
       }
     })
-    res.send(resource);
+    return resource;
   } catch (error) {
     console.log(error);
   }
-})
+}
 
 const deployments = async (params) => {
   try {    
@@ -68,26 +73,49 @@ const basicAuth = async () => {
   } catch (error) {
     console.log(error);
   }
-  console.log(header);
-  return header;
 }
 
-router.get("/deployments", verifyToken, async (req, res) => {
+router.get("/deployments", async (req, res) => {
   try {
-    var deploy = await deployments(req.params.id);
-    let item = [];
-    console.log(deploy);
+    var deploy = await deploymentsbaru();
     for (let i = 0; i < deploy.length; i++) {
-      var result = Object.values(deploy[i])
-      var response = await axios.get(result.toString(), await basicAuth())
-      item.push({
-        data : response.data
-      })
+      var result = deploy[i].name;
+      var resultslot = deploy[i].slot;
+      console.log(result);
+      for(var prop in resultslot){
+        console.log(prop);
+        console.log(resultslot[prop]);
+        var hasil = resultslot[prop];
+        
+        var response = await axios.get(hasil, await basicAuth(), (res) =>{
+          try {
+            
+              res = response.data;
+          } catch (error) {
+            console.log("Error Callback" + error);
+          }          
+        });
+        
+        
+        // console.log(datanya);
+      }
+      // for(var prop in resultslot){
+      //   var hello = resultslot[prop];
+        
+        
+        // var response = await axios.get(resulthasilslot, await basicAuth());
+        // var datanya = response.data;
+      // }
+      // console.log(itemslot);
+      // item.push({
+      //   name : result,
+      //   resultslot
+      // })
     }
-    res.status(200).send(item);
+    res.status(200).send(itemslot);
   } catch (error) {
     console.error("Errornya " + error);
-  }
+  } 
 })
 
 router.get("/logstream", verifyToken, async (req, res) => {
