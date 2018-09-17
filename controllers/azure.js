@@ -76,7 +76,6 @@ const basicAuth = async () => {
         "Authorization": "Basic " + data
       }
     }
-    console.log(header);
     return header;
   } catch (error) {
     console.log(error);
@@ -85,18 +84,23 @@ const basicAuth = async () => {
 
 router.get("/deployments", async (req, res) => {
   try {
+    var data = [];
     var deploy = await deployments();
     var map = deploy.map(doc => Object.values(doc.slot));
-    console.log(map);
     for(var i = 0; i<map.length; i++){
       var item = map[i];
       for(var prop in item){
-        var response = await axios.get(item[prop], await basicAuth());
-        console.log(response.data);
+        try {
+          var response = await axios.get(item[prop], await basicAuth());
+          data.push(response.data);
+        } catch (error) {
+          data.push("Network Error");
+        }
       }
     }
+    res.send(data);
   } catch (error) {
-    console.error("Errornya " + error);
+    console.error(error.message);
   } 
 })
 
