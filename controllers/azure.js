@@ -114,7 +114,7 @@ router.get("/logstream", verifyToken, async (req, res) => {
   }
 })
 
-router.get("/resources", verifyToken, async (req, res) => {
+router.get("/resources", async (req, res) => {
   try {
     var allResources = [];
     var id = req.query.id;
