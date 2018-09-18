@@ -84,21 +84,11 @@ const basicAuth = async () => {
 
 router.get("/deployments", async (req, res) => {
   try {
-    var data = [];
     var deploy = await deployments();
-    var map = deploy.map(doc => Object.values(doc.slot));
-    for(var i = 0; i<map.length; i++){
-      var item = map[i];
-      for(var prop in item){
-        try {
-          var response = await axios.get(item[prop], await basicAuth());
-          data.push(response.data);
-        } catch (error) {
-          data.push("Network Error");
-        }
-      }
+    for(var j = 0; j<deploy.length; j++){
+      var service = deploy[j];
+      console.log(service);
     }
-    res.send(data);
   } catch (error) {
     console.error(error.message);
   } 
@@ -223,7 +213,7 @@ router.post("/auth", verifyToken, async (req, res) => {
 })
 
 //UPDATE EXISTING BASICAUTH
-router.put("/auth/:id", verifyToken, async (req, res) => {
+router.put("/auth", async (req, res) => {
   try {
     var encode = req.body.username + ":" + req.body.password;
     console.log(encode);
@@ -231,12 +221,12 @@ router.put("/auth/:id", verifyToken, async (req, res) => {
     var base64data = buff.toString('base64');
     console.log(base64data);
     var hashedPassword = await bcrypt.hash(req.body.password, 8);
-    var response = await authCollection.doc(req.params.id).update({
+    await authCollection.doc("9xpddlxobFiKis2Tae5l").update({
       basicAuth : base64data,
       username : req.body.username,
       password : hashedPassword
       })
-      res.status(200).send("Success updating auth. " + response.id);
+      res.status(200).send("Success updating auth.");
   } catch (error) {
     res.status(500).send("There was a problem updating auth. " + error);
   }
