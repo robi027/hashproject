@@ -93,7 +93,7 @@ router.get("/deployments", async (req, res) => {
         try {
           var response = await axios.get(slot[i], await basicAuth())
           var responseData = response.data;
-          final.push({name, responseData, message: "Success"})
+          final.push({name, [i]: responseData, message: "Success"})
         } catch (error) {
           final.push({name, message: "Error"})
         }
