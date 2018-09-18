@@ -56,7 +56,7 @@ router.get("/deployments", verifyToken, async (req, res) => {
   try {
     var final = [];
     var deploy = await deployments();
-    deploy.map(doc => {
+    deploy.map(async doc => {
       var slot = doc.slot;
       var name = doc.name;
       for (let i in slot) {
