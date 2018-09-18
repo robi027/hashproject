@@ -84,11 +84,22 @@ const basicAuth = async () => {
 
 router.get("/deployments", async (req, res) => {
   try {
+    var final = [];
     var deploy = await deployments();
     for(var j = 0; j<deploy.length; j++){
-      var service = deploy[j];
-      console.log(service);
+      var slot = deploy[j].slot;
+      var name = deploy[j].name;
+      for (let i in slot) {
+        try {
+          var response = await axios.get(slot[i], await basicAuth())
+          var responseData = response.data;
+          final.push({name, responseData, message: "Success"})
+        } catch (error) {
+          final.push({name, message: "Error"})
+        }
+      }
     }
+    res.send(final);
   } catch (error) {
     console.error(error.message);
   } 
