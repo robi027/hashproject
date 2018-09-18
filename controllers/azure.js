@@ -11,36 +11,6 @@ router.use(bodyParser.json());
 
 const logstream = "https://dummy-hash.scm.azurewebsites.net/api/logstream";
 
-const deploymentsbaru = async () => {
-  try {
-    var resource= [];
-    var response = await resourceCollection.get();
-    response.forEach(doc => {
-      var name = doc.data().name;
-      var type = doc.data().type;
-      var slot = doc.data().slot;
-      // if(type == "be"){
-      //   const result = Object.keys(slot).reduce((acc, key) =>{
-      //     acc[key] = slot[key] + "api/deployments"
-      //     return acc;
-      //   }, {});
-      //   resource.push({ name, slot: result});
-      // }
-      if(type == "be"){
-        for (var prop in slot){
-          slot[prop] = slot[prop]+"api/deployments";
-        }        
-        resource.push({ name, slot});
-      }else{
-        resource.push({ name, slot });
-      }
-    })
-    return resource;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 const deployments = async () => {
   try {
     var resource= [];
@@ -82,23 +52,23 @@ const basicAuth = async () => {
   }
 }
 
-router.get("/deployments", async (req, res) => {
+router.get("/deployments", verifyToken, async (req, res) => {
   try {
     var final = [];
     var deploy = await deployments();
-    for(var j = 0; j<deploy.length; j++){
-      var slot = deploy[j].slot;
-      var name = deploy[j].name;
+    deploy.map(async doc => {
+      var slot = doc.slot;
+      var name = doc.name;
       for (let i in slot) {
         try {
           var response = await axios.get(slot[i], await basicAuth())
           var responseData = response.data;
-          final.push({name, [i]: responseData, message: "Success"})
+          final.push({name, [i]: responseData})
         } catch (error) {
-          final.push({name, message: "Error"})
+          final.push({name, [i]: {message: "Network error"}})
         }
       }
-    }
+    })
     res.send(final);
   } catch (error) {
     console.error(error.message);
@@ -224,7 +194,7 @@ router.post("/auth", verifyToken, async (req, res) => {
 })
 
 //UPDATE EXISTING BASICAUTH
-router.put("/auth", async (req, res) => {
+router.put("/auth", verifyToken, async (req, res) => {
   try {
     var encode = req.body.username + ":" + req.body.password;
     console.log(encode);
