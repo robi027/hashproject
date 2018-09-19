@@ -54,22 +54,24 @@ const basicAuth = async () => {
 
 router.get("/deployments", verifyToken, async (req, res) => {
   try {
-    let final = [];
+    var dataName = [];
     var deploy = await deployments();
-    await Promise.all(deploy.map(async doc => {
-      var slot = doc.slot;
-      var name = doc.name;
-      for (let i in slot) {
+    for (let i = 0; i < deploy.length; i++) {
+      var slot= deploy[i].slot;
+      var name= deploy[i].name;
+      var data = [];
+      for(var j in slot){
         try {
-          var response = await axios.get(slot[i], await basicAuth());
+          var response = await axios.get(slot[j], await basicAuth());
           var responseData = response.data;
-          final.push({name, [i]: responseData});
+          data.push({[j]: slot[j], responseData});
         } catch (error) {
-          final.push({name, [i]: {message: "Network Error"}});
+          data.push({[j]: slot[j], message: "Network error"});
         }
       }
-    }))
-    res.send(final);
+      dataName.push({name, slot: data});
+    }
+    res.send(dataName);
   } catch (error) {
     console.error(error.message);
   } 
@@ -197,10 +199,8 @@ router.post("/auth", verifyToken, async (req, res) => {
 router.put("/auth", verifyToken, async (req, res) => {
   try {
     var encode = req.body.username + ":" + req.body.password;
-    console.log(encode);
     var buff = new Buffer(encode);  
     var base64data = buff.toString('base64');
-    console.log(base64data);
     var hashedPassword = await bcrypt.hash(req.body.password, 8);
     await authCollection.doc("9xpddlxobFiKis2Tae5l").update({
       basicAuth : base64data,
