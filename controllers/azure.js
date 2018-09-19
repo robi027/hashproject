@@ -54,21 +54,21 @@ const basicAuth = async () => {
 
 router.get("/deployments", verifyToken, async (req, res) => {
   try {
-    var final = [];
+    let final = [];
     var deploy = await deployments();
-    deploy.map(async doc => {
+    await Promise.all(deploy.map(async doc => {
       var slot = doc.slot;
       var name = doc.name;
       for (let i in slot) {
         try {
-          var response = await axios.get(slot[i], await basicAuth())
+          var response = await axios.get(slot[i], await basicAuth());
           var responseData = response.data;
-          final.push({name, [i]: responseData})
+          final.push({name, [i]: responseData});
         } catch (error) {
-          final.push({name, [i]: {message: "Network error"}})
+          final.push({name, [i]: {message: "Network Error"}});
         }
       }
-    })
+    }))
     res.send(final);
   } catch (error) {
     console.error(error.message);
