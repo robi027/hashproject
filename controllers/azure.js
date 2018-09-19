@@ -66,7 +66,7 @@ router.get("/deployments", verifyToken, async (req, res) => {
           var responseData = response.data;
           data.push({[j]: slot[j], responseData});
         } catch (error) {
-          data.push({[j]: slot[j], message: "Network error"});
+          data.push({[j]: slot[j], responseData: {message: "Network error"}});
         }
       }
       dataName.push({name, slot: data});
